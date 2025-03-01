@@ -123,23 +123,26 @@
     };
 
     // Delete plant functionality using AJAX DELETE request
-    $(document).on('click', '.delete-link', function (e) {
-        e.preventDefault();
+  $(document).on('click', '.delete-link', function (e) {
+      e.preventDefault();
 
-        var plantId = $(this).data('plant-id');
-        if (plantId && confirm("Are you sure you want to delete this plant?")) {
-            $.ajax({
-                url: `/api/plants/delete/${plantId}`,
-                type: 'DELETE',
-                success: function (response) {
-                    alert("Plant deleted successfully!");
-                    $('#plant-' + plantId).remove();
-                },
-                error: function (xhr, status, error) {
-                    alert("Error deleting plant: " + error);
-                }
-            });
-        }
-    });
+      var plantId = $(this).data('plant-id');
+      console.log("Plant ID: " + plantId);  // Log the plantId to check if it's correctly retrieved
 
-})(jQuery);
+      if (plantId && confirm("Are you sure you want to delete this plant?")) {
+          $.ajax({
+              url: `/api/plants/delete/${plantId}`,  // Correct URL structure
+              type: 'DELETE',  // Ensure the method is DELETE
+              success: function(response) {
+                  alert("Plant deleted successfully!");
+                  $('#plant-' + plantId).remove();  // Remove the plant from the DOM
+              },
+              error: function(xhr, status, error) {
+                  alert("Error deleting plant: " + error);
+              }
+          });
+      }
+  });
+
+
+(jQuery);

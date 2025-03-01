@@ -1,4 +1,4 @@
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8" />
   <title th:text="'Nature Heaven'"></title>
@@ -103,6 +103,8 @@
             <p class="mb-4"><strong>Stock Quantity: </strong><span th:text="${plant.stockQuantity}">Stock Quantity</span></p>
             <p class="mb-4"><strong>Category: </strong><span th:text="${plant.category.name}">Category Name</span></p>
             <a class="btn btn-sm" th:href="@{/api/plants/plant/{id}/guide(id=${plant.id})}"><i class="fa fa-plus text-primary me-2"></i>View Guide</a>
+            <a class="btn btn-sm" th:href="@{/api/plants/update/{id}(id=${plant.id})}"><i class="fa fa-plus text-primary me-2"></i>Update  </a>
+            <a class="btn btn-sm" th:href="@{/api/plants/delete/{id}(id=${plant.id})}"><i class="fa fa-plus text-primary me-2"></i>Delete </a>
             <button
                     th:attr="data-plant-id=${plant.id}"
                     class="favorite-btn border-0 bg-transparent"
@@ -113,11 +115,7 @@
                 </svg>
               </a>
             </button>
-            <button class="btn btn-danger delete-link"
-                    data-plant-id="{{plant.id}}"
-                    title="Delete Plant">
-              Delete
-            </button>
+
           </div>
         </div>
       </div>
@@ -127,8 +125,6 @@
 <!-- Plant End -->
 
 <a href="/api/plants/add" class="btn btn-primary">Add New Plant</a>
-
-
 
 <!-- Footer Start -->
 <div class="container-fluid bg-dark text-light footer mt-5 py-5 wow fadeIn" data-wow-delay="0.1s">

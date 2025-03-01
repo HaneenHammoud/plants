@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -109,27 +111,76 @@ public class PlantController {
     }
 
 
-    // Update a plant
+    // Update a plant via API (for RESTful calls)
     @PutMapping("/{id}")
     public ResponseEntity<Plant> updatePlant(@PathVariable Long id, @RequestBody Plant plant) {
         Optional<Plant> existingPlant = plantService.getPlantById(id);
         if (existingPlant.isPresent()) {
-            plant.setId(id);
-            Plant updatedPlant = plantService.savePlant(plant);
+            plant.setId(id); // Ensure we are updating the existing plant
+            Plant updatedPlant = plantService.savePlant(plant); // Save the updated plant
             return new ResponseEntity<>(updatedPlant, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Delete a plant for ajax
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deletePlant(@PathVariable Long id) {
+
+
+
+    // Delete a plant
+    @GetMapping ("/delete/{id}")
+    public String deletePlant(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        Optional<Plant> existingPlant = plantService.getPlantById(id);
+
+        if (existingPlant.isPresent()) {
+            List<Plant> plants = existingPlant.get().getCategory().getPlants();
+            plants.remove(existingPlant.get());
+            Category category= categoryRepository.getById(existingPlant.get().getCategory().getId());
+            category.setPlants(plants);
+            categoryRepository.save(category);
+            plantGuideRepository.deleteById(existingPlant.get().getPlantGuide().getId());
+
+            plantService.deletePlant(id);
+            redirectAttributes.addFlashAttribute("message", "Plant deleted successfully!");
+            return "redirect:/api/plants/"; // Redirect to the plant list page
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Plant not found!");
+            return "redirect:/api/plants/"; // Redirect to the plant list page with error message
+        }
+    }
+
+
+    // Updating a plant along with its guide
+    @PostMapping("/update/{id}")
+    public String updatePlant(@PathVariable Long id, @ModelAttribute("plant") Plant plant, RedirectAttributes redirectAttributes) {
         Optional<Plant> existingPlant = plantService.getPlantById(id);
         if (existingPlant.isPresent()) {
-            plantService.deletePlant(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            plant.setId(id); // Ensure we are updating the existing plant
+            plantGuideRepository.save(plant.getPlantGuide());
+            plantRepository.save(plant);
+            redirectAttributes.addFlashAttribute("message", "Plant and guide updated successfully!");
+            return "redirect:/api/plants/"; // Redirect after successful update
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Plant not found!");
+            return "redirect:/api/plants/"; // Redirect to the list page with error
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+
+
+    @GetMapping("/update/{id}")
+    public String showUpdated (@PathVariable long id,Model model) {
+        // Initialize the plant object and its associated plantGuide
+        Plant plant = plantService.getPlantById(id).get();
+        plant.setPlantGuide(plant.getPlantGuide());
+
+        model.addAttribute("plant", plant);
+
+        List<Category> categories = categoryRepository.findAll();
+        model.addAttribute("categories", categories);
+
+        return "update-plant"; // Thymeleaf template name
+    }
+
+
 
 }

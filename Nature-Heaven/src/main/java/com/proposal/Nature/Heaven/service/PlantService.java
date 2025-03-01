@@ -3,6 +3,7 @@ import com.proposal.Nature.Heaven.model.Plant;
 import com.proposal.Nature.Heaven.model.PlantGuide;
 import com.proposal.Nature.Heaven.repository.PlantGuideRepository;
 import com.proposal.Nature.Heaven.repository.PlantRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -49,5 +50,11 @@ public class PlantService {
     public List<Plant> getPlantsByCategory(Long categoryId) {
         return plantRepository.findByCategoryId(categoryId);
         }
+
+    @Transactional
+    public void updatePlantAndGuide(Plant plant) {
+        plantGuideRepository.save(plant.getPlantGuide());
+        plantRepository.save(plant);
+    }
 
 }

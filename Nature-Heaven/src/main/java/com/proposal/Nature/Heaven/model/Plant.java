@@ -31,7 +31,7 @@ public class Plant {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "plant_guide_id")
     private PlantGuide plantGuide;
 
