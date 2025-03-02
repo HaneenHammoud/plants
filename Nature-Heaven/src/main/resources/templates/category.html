@@ -92,7 +92,7 @@
         <div class="col-lg-4 col-md-6 wow fadeInUp" th:each="category : ${categories}" th:data-wow-delay="${category.name}">
             <div class="service-item rounded d-flex flex-column h-100">
                 <div class="service-img rounded">
-                    <img th:src="@{${category.imageUrl}}" class="img-fluid circular-img" alt="Category Image">
+                    <img th:src="${category.imageUrl}" class="img-fluid circular-img" alt="Category Image">
                 </div>
                 <div class="service-text rounded p-5 d-flex flex-column justify-content-between">
                     <h4 class="mb-3" th:text="${category.name}">Category Name</h4>

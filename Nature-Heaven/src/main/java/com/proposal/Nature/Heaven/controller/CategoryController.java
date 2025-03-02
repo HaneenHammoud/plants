@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +34,7 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final PlantService plantService;
     @Value("${upload.path}")
-    private final String uploadDir = "uploads/";
+    private  String uploadDir ;
 
     @Autowired
     public CategoryController(CategoryService categoryService, PlantService plantService) {
@@ -133,37 +134,52 @@ public class CategoryController {
 
     // Handle form submission
     @PostMapping("/add")
-    public String saveCategory(@ModelAttribute Category category,
-                               @RequestParam("imageUrl") MultipartFile file,
-                               RedirectAttributes redirectAttributes) throws IOException {
-        // Validate the category object
+    public String saveCategory(
+            @RequestParam("name") String name, // Get category name
+            @RequestParam("imageUrl") MultipartFile file, // Handle file upload
+            RedirectAttributes redirectAttributes) throws IOException {
+
+        // Create a new category object
+        Category category = new Category();
+        category.setName(name);
+
+        // Validate that the image file is provided
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Image file cannot be empty");
-            return "redirect:/add-category";  // Redirect back to the category add page
+            return "redirect:/add-category"; // Redirect to the add category page
         }
 
-        // Generate a unique filename to avoid conflicts
+        // Generate a unique file name using current timestamp to avoid conflicts
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        File uploadDirectory = new File(uploadDir); // Use the path from the properties file
+
+        // Define the upload directory path
+        String uploadDir = "src/main/resources/static/img/";  // This works locally
+
+        // Ensure the upload directory exists
+        File uploadDirectory = new File(uploadDir);
         if (!uploadDirectory.exists()) {
             uploadDirectory.mkdirs(); // Create directories if they don't exist
         }
 
-        // Define the destination file path
+        // Define the destination file path (relative to static/img)
         File destinationFile = new File(uploadDirectory, fileName);
 
-        // Save the file to the server
+        // Save the image file to the destination directory
         file.transferTo(destinationFile);
 
-        // Store the file path in the category's imageUrl field
-        category.setImageUrl(uploadDir + File.separator + fileName); // Ensure full path is set
+        // Log the file path for debugging purposes
+        System.out.println("File saved to: " + destinationFile.getAbsolutePath());
 
-        // Save the category in the database
+        // Store the relative path for the image in the category object
+        category.setImageUrl("/img/" + fileName); // Use relative path
+
+        // Save the category object
         categoryService.saveCategory(category);
 
-        // Add success message and redirect
+        // Add a flash attribute to indicate success
         redirectAttributes.addFlashAttribute("message", "Category added successfully!");
-        return "redirect:/api/categories/";
+
+        return "redirect:/api/categories/";  // Redirect to the list of categories (or wherever you need)
     }
 
 
