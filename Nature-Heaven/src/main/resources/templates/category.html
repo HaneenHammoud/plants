@@ -92,7 +92,7 @@
         <div class="col-lg-4 col-md-6 wow fadeInUp" th:each="category : ${categories}" th:data-wow-delay="${category.name}">
             <div class="service-item rounded d-flex flex-column h-100">
                 <div class="service-img rounded">
-                    <img th:src="${category.imageUrl}" class="img-fluid circular-img" alt="Category Image">
+                    <img th:if="${category.image != null}" th:src="@{/api/categories/{categoryId}/image(categoryId=${category.id})}" class="img-thumbnail" alt="Category Image">
                 </div>
                 <div class="service-text rounded p-5 d-flex flex-column justify-content-between">
                     <h4 class="mb-3" th:text="${category.name}">Category Name</h4>
@@ -109,17 +109,9 @@
         </div>
     </div>
 </div>
-<!-- Shop by Categories Section End -->
 <a href="/api/categories/add" class="btn btn-primary">Add New Category</a>
 
 
-
-    <!-- Back to Home Button -->
-    <div class="text-center mt-4">
-        <a href="/home" class="btn btn-secondary">
-            <i class="bi bi-house-door"></i> Back to Home
-        </a>
-    </div>
 </div>
 </body>
 

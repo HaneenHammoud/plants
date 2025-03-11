@@ -16,18 +16,21 @@ public class Category {
 
     @Column(nullable = false, unique = true)
     private String name;
-    private String imageUrl;
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+    @Lob
+    @Column(columnDefinition = "MEDIUMBLOB")
+    private String image;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Plant> plants;
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
 
     public Long getId() {
         return id;

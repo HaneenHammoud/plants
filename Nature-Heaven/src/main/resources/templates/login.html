@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+        /* Background Image and Styling */
+        body {
+            background: url('https://w0.peakpx.com/wallpaper/281/291/HD-wallpaper-flower-shop-blossoms-flowers-cat-window-colors.jpg') no-repeat center center fixed;
+            background-size: cover;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 80px; /* Prevent content from being hidden under the navbar */
+        }
+
+        /* Navbar Fix */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000; /* Ensure it's above other elements */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Login Container Styling */
+        .login-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        /* Animation for form slide-in */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-control {
+            border-radius: 20px;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+        }
+
+        .btn-login {
+            width: 100%;
+        }
+
+        .alert {
+            margin-top: 15px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar Start -->
+<nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top">
+  <a href="#" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+    <h1 class="m-0">Gardener</h1>
+  </a>
+  <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
+    <div class="navbar-nav p-4 p-lg-0">
+      <a th:href="@{/index}" class="nav-item nav-link">Home</a>
+      <a th:href="@{/about}" class="nav-item nav-link active">About</a>
+      <a th:href="@{/service}" class="nav-item nav-link">Services</a>
+      <a th:href="@{/project}" class="nav-item nav-link">Projects</a>
+      <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+        <div class="dropdown-menu bg-light m-0">
+          <a th:href="@{/feature}" class="dropdown-item">Features</a>
+          <a th:href="@{/quote}" class="dropdown-item">Free Quote</a>
+          <a th:href="@{/team}" class="dropdown-item">Our Team</a>
+          <a th:href="@{/testimonial}" class="dropdown-item">Testimonial</a>
+          <a th:href="@{/api/plants/}" class="dropdown-item">Plants</a>
+          <a th:href="@{/api/categories/}" class="dropdown-item">Shop By Categories</a>
+        </div>
+      </div>
+      <a th:href="@{/contact}" class="nav-item nav-link">Contact</a>
+    </div>
+    <a th:href="@{/quote}" class="btn btn-primary py-4 px-lg-4 rounded-0 d-none d-lg-block">Get A Quote<i class="fa fa-arrow-right ms-3"></i></a>
+  </div>
+</nav>
+<!-- Navbar End -->
+
+
+<!-- Login Form -->
+<div class="login-container">
+  <h2>Login</h2>
+  <form th:action="@{/perform_login}" method="post">
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+    </div>
+    <button type="submit" class="btn btn-primary btn-login">Login</button>
+  </form>
+  <div th:if="${param.error}" class="alert alert-danger">Invalid username or password.</div>
+  <div th:if="${param.logout}" class="alert alert-success">You have been logged out.</div>
+  <div class="text-center mt-3">
+    <a href="/auth/register" th:href="@{/auth/register}">Don't have an account? Register here</a>
+  </div>
+</div>
+
+<!-- Bootstrap and jQuery JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Custom JavaScript -->
+<script>
+    $(document).ready(function () {
+        // Custom validation for empty fields
+        $('form').on('submit', function (e) {
+            if ($('#username').val().trim() === '' || $('#password').val().trim() === '') {
+                e.preventDefault();
+                alert('Please fill out both fields!');
+                $('.login-container').addClass('shake');
+
+                setTimeout(function () {
+                    $('.login-container').removeClass('shake');
+                }, 500);
+            }
+        });
+    });
+</script>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/lib/wow/wow.min.js}"></script>
+<script th:src="@{/lib/easing/easing.min.js}"></script>
+<script th:src="@{/lib/waypoints/waypoints.min.js}"></script>
+<script th:src="@{/lib/owlcarousel/owl.carousel.min.js}"></script>
+<script th:src="@{/lib/counterup/counterup.min.js}"></script>
+<script th:src="@{/lib/parallax/parallax.min.js}"></script>
+<script th:src="@{/lib/isotope/isotope.pkgd.min.js}"></script>
+<script th:src="@{/lib/lightbox/js/lightbox.min.js}"></script>
+
+<!-- Template Javascript -->
+<script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

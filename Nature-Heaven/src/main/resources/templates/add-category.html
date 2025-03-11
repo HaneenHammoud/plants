@@ -8,24 +8,16 @@
 <body>
 <div class="container">
     <h2>Add New Category</h2>
-
-    <!-- Form to upload the category -->
-    <form action="#" th:action="@{/api/categories/add}" th:object="${category}" method="POST" enctype="multipart/form-data">
-        <!-- Category Name -->
-        <div class="form-group">
-            <label for="name">Category Name:</label>
-            <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="Enter Category Name" required>
+    <form th:action="@{/api/categories/add}" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="name" class="form-label">Category Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
         </div>
-
-        <!-- Image Upload -->
-        <div class="form-group">
-            <label for="imageUrl">Category Image:</label>
-            <input type="file" id="imageUrl" th:field="*{imageUrl}" class="form-control">
+        <div class="mb-3">
+            <label for="imageFile" class="form-label">Image</label>
+            <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*" required>
         </div>
-
-
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-success">Save Category</button>
+        <button type="submit" class="btn btn-primary">Add Category</button>
     </form>
 
     <a href="#" th:href="@{/api/categories/}" class="btn btn-secondary mt-3">Back to Categories</a>
